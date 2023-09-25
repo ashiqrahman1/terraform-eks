@@ -1,0 +1,22 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.17.0"
+    }
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+      version = "2.23.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = var.region
+}
+
+provider "kubernetes" {
+  host = data.terraform_remote_state.eks.outputs.eks_endpoint
+  cluster_ca_certificate = base64decode(data.terraform_remote_state.eks.outputs.eks_cluster_certificate_authority)
+  token = data.aws_eks_cluster_auth.eks.token
+}
